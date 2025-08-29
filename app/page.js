@@ -110,7 +110,7 @@ export default function Home() {
            • ㅤPage {page}
         </h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {animeList.map((anime) => (
             <AnimeCard key={anime.mal_id} anime={anime} />
           ))}
