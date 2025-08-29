@@ -38,24 +38,43 @@ export default function Home() {
   const [rating, setRating] = useState("all");
 
   useEffect(() => {
-    async function fetchAnime() {
-      let url = new URL(`https://api.jikan.moe/v4/seasons/${year}/${season}?sfw`);
-      const params = new URLSearchParams({ page, sfw: "true", limit: "24" });
+  async function fetchAnime() {
+    let url = new URL(`https://api.jikan.moe/v4/seasons/${year}/${season}?sfw`);
+    const params = new URLSearchParams({ page, sfw: "true", limit: "24" });
 
-      url.search = params.toString();
+    // Note: Removed the rating and type filters from the URL, as the Jikan seasonal endpoint doesn't support them directly.
 
-      try {
-        const res = await fetch(url);
-        const json = await res.json();
-        setAnimeList(json.data ?? []);
-        setHasNextPage(json.pagination?.has_next_page ?? false);
-      } catch (err) {
-        console.error("Fetch error:", err);
-      }
+    url.search = params.toString();
+
+    try {
+      const res = await fetch(url);
+      const json = await res.json();
+      
+      const rawData = json.data ?? [];
+
+      // Create a Set to store unique mal_ids
+      const uniqueIds = new Set();
+      const uniqueAnimeList = [];
+
+      // Iterate through the fetched data and add only unique items
+      rawData.forEach(anime => {
+        if (!uniqueIds.has(anime.mal_id)) {
+          uniqueIds.add(anime.mal_id);
+          uniqueAnimeList.push(anime);
+        }
+      });
+      
+      setAnimeList(uniqueAnimeList);
+      setHasNextPage(json.pagination?.has_next_page ?? false);
+    } catch (err) {
+      console.error("Fetch error:", err);
+      // It's good practice to clear the list on error
+      setAnimeList([]);
     }
+  }
 
-    fetchAnime();
-  }, [year, season, page]);
+  fetchAnime();
+}, [year, season, page]);
 
   return (
     <div className="p-4 space-y-6">
