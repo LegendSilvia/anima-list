@@ -10,6 +10,7 @@ export default function AnimeCard({ anime }) {
     const genres = anime.genres;
     const rating = anime.rating;
     const status = anime.status;
+    const type = anime.type;
 
     if (!anime || !imageUrl) {
         return null;
@@ -18,12 +19,28 @@ export default function AnimeCard({ anime }) {
     const visibleGenres = genres?.slice(0, 3) || [];
     const remainingGenresCount = (genres?.length || 0) - visibleGenres.length;
 
+    // TODO: Add a function to handle adding the anime to the watchlist
+    const handleAddToWatchlist = () => {
+        console.log(`Adding ${title} to watchlist`);
+    };
+
     return (
         <div key={anime.mal_id} className="relative w-72 h-120 bg-gray-900 rounded-lg overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105">
             <div className="relative w-full h-2/3">
                 <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
                 <div className="absolute bottom-2 left-2 px-2 py-1 bg-black bg-opacity-70 text-white text-xs font-bold rounded-full">
                     {rating}
+                </div>
+                <div className="absolute top-2 left-2 px-2 py-1 bg-gray-700 bg-opacity-70 text-white text-xs font-bold rounded-full">
+                    {type}
+                </div>
+
+                <div
+                    className="absolute top-2 right-2 px-2 py-1 bg-blue-200 border rounded-full border-blue-600 hover:text-white hover:scale-105 hover:bg-blue-600 text-blue-600 text-xs font-bold rounded-full cursor-pointer"
+                    onClick={handleAddToWatchlist}
+                    title="Add to Watchlist"
+                >
+                    Add To List
                 </div>
             </div>
 
@@ -32,7 +49,7 @@ export default function AnimeCard({ anime }) {
                     <div className="flex justify-between items-center mb-1">
                         <span
                             className={`text-xs font-semibold px-2 py-1 border rounded-full
-    ${status === "Currently Airing"
+                                ${status === "Currently Airing"
                                     ? "text-green-500 border-green-500"
                                     : status === "Not yet aired"
                                         ? "text-yellow-500 border-yellow-500"
@@ -44,7 +61,6 @@ export default function AnimeCard({ anime }) {
                         <span className="text-xs text-gray-400">{episodes} episodes</span>
                     </div>
 
-                    {/* Shortened Title */}
                     <h3 className="text-xl font-bold mb-2 whitespace-nowrap overflow-hidden overflow-ellipsis" title={title}>
                         {title}
                     </h3>
