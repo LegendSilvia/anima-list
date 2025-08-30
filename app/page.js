@@ -35,7 +35,7 @@ export default function Home() {
       return animeCacheRef.current[cacheKey];
     }
     const url = new URL(`https://api.jikan.moe/v4/seasons/${year}/${season}`);
-    const params = new URLSearchParams({ page, sfw: "true", limit: "25" });
+    const params = new URLSearchParams({ page, sfw: "true", limit: "24" });
     url.search = params.toString();
 
     try {
