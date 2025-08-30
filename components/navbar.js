@@ -32,9 +32,9 @@ export default function Navbar() {
                         </a>
 
                         {/* Profile Logo and Link */}
-                        <Link href="/profile" className="hover:text-gray-300">
+                        {/* <Link href="/profile" className="hover:text-gray-300">
                             <CgProfile size={24} />
-                        </Link>
+                        </Link> */}
                     </div>
 
                     {/* Mobile button */}
