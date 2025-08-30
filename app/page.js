@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import AnimeCard from "./../components/animeCard";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
+import mockupData from './../modules/mockupData.json';
 
 const SEASONS = ["winter", "spring", "summer", "fall"];
 
@@ -27,6 +28,10 @@ export default function Home() {
 
   // Correctly initialize and persist the cache using useRef
   const animeCacheRef = useRef({});
+
+  const getMockupData = () => {
+    return { data: mockupData.data, hasNextPage: false };
+  };
 
   const fetchAnimeWithCache = useCallback(async (year, season, page) => {
     const cacheKey = `${year}-${season}-${page}`;
@@ -57,12 +62,14 @@ export default function Home() {
     const getAnime = async () => {
       setLoading(true);
       const { data, hasNextPage } = await fetchAnimeWithCache(year, season, page);
+      // const { data, hasNextPage } = getMockupData();
       setAnimeList(data);
       setHasNextPage(hasNextPage);
       setLoading(false);
     };
     getAnime();
   }, [year, season, page, fetchAnimeWithCache]);
+  
 
   const handleSeasonChange = (direction) => {
     const currentIndex = SEASONS.indexOf(season);
@@ -87,7 +94,7 @@ export default function Home() {
         <section className="bg-gray-800 rounded-2xl p-6 shadow-xl flex items-center justify-between">
           <button
             onClick={() => handleSeasonChange(-1)}
-            className="p-3 transition-transform duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full"
+            className="cursor-pointer p-3 transition-transform duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full"
             aria-label="Previous Season"
           >
             <ArrowLeftCircleIcon className="w-8 h-8 text-blue-500" />
@@ -102,7 +109,7 @@ export default function Home() {
           </div>
           <button
             onClick={() => handleSeasonChange(1)}
-            className="p-3 transition-transform duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full"
+            className="cursor-pointer p-3 transition-transform duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full"
             aria-label="Next Season"
           >
             <ArrowRightCircleIcon className="w-8 h-8 text-blue-500" />
@@ -114,7 +121,7 @@ export default function Home() {
               Loading...
             </div>
           ) : (
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(288px,1fr))] gap-6 p-4">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(372px,1fr))] gap-6 p-4">
               {animeList.length > 0 ? (
                 animeList.map((anime) => (
                   <AnimeCard key={anime.mal_id} anime={anime} />
@@ -131,14 +138,14 @@ export default function Home() {
             <button
               disabled={page === 1}
               onClick={() => setPage((p) => p - 1)}
-              className="px-6 py-3 bg-gray-700 text-white rounded-full font-bold shadow-md transition-all duration-200 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="cursor-pointer px-6 py-3 bg-gray-700 text-white rounded-full font-bold shadow-md transition-all duration-200 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </button>
             <button
               disabled={!hasNextPage || loading}
               onClick={() => setPage((p) => p + 1)}
-              className="px-6 py-3 bg-blue-600 text-white rounded-full font-bold shadow-md transition-all duration-200 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="cursor-pointer px-6 py-3 bg-blue-600 text-white rounded-full font-bold shadow-md transition-all duration-200 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>
