@@ -18,3 +18,8 @@ This project is open source and intended for personal-learning.
 - **Tailwind CSS** 4
 - **Jikan API** (Anime data)
 - **React Icons**
+
+## Caution
+
+Because i store watchlist information in cookies it result in all list limited to around 16-20,
+i might add option to register account and save list information on firebase.
