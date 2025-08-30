@@ -105,72 +105,76 @@ export default function YourList() {
                 <section className="bg-gray-800 rounded-2xl p-6 shadow-xl flex items-center justify-center">
                     <h1 className="text-3xl font-bold">Your Anime Watchlist</h1>
                 </section>
-                {Object.keys(statusHeadings).map(status => (
-                    groupedAnime[status] && groupedAnime[status].length > 0 && (
-                        <section key={status} className="bg-gray-800 rounded-2xl p-6 shadow-xl">
-                            <h2 className="text-2xl font-bold mb-4">{statusHeadings[status]}</h2>
-                            <div className="space-y-4">
-                                {groupedAnime[status].map(anime => (
-                                    <div key={anime.id} className={`flex items-center p-4 bg-gray-700 rounded-lg shadow-lg border-l-4 ${statusColors[anime.watch_status] || 'border-gray-500'}`}>
-                                        <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 mr-4">
-                                            <img src={anime.imageUrl} alt={anime.title} className="w-full h-full object-cover rounded-md" />
-                                        </div>
-                                        <div className="flex-grow flex flex-col justify-between">
-                                            <div className="flex justify-between items-start">
-                                                <h3 className="text-xl font-bold line-clamp-2">{anime.title}</h3>
-                                                <div className="relative ml-4">
-                                                    <button
-                                                        onClick={() => setOpenDropdownId(openDropdownId === anime.id ? null : anime.id)}
-                                                        className="px-3 py-1 bg-gray-600 rounded-full text-xs font-bold hover:bg-gray-500"
-                                                    >
-                                                        Edit - More ▼
-                                                    </button>
-                                                    {openDropdownId === anime.id && (
-                                                        <ul className="absolute right-0 mt-2 w-40 bg-gray-800 rounded-lg shadow-lg z-10">
-                                                            <li className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer rounded-t-lg" onClick={() => handleUpdateWatchStatus(anime.id, 'watching')}>Watching</li>
-                                                            <li className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer" onClick={() => handleUpdateWatchStatus(anime.id, 'completed')}>Completed</li>
-                                                            <li className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer" onClick={() => handleUpdateWatchStatus(anime.id, 'on hold')}>On Hold</li>
-                                                            <li className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer" onClick={() => handleUpdateWatchStatus(anime.id, 'dropped')}>Dropped</li>
-                                                            <li className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer" onClick={() => handleUpdateWatchStatus(anime.id, 'plan to watch')}>Plan to Watch</li>
-                                                            <li className="px-4 py-2 text-sm text-red-400 hover:bg-red-900 cursor-pointer rounded-b-lg" onClick={() => handleUpdateWatchStatus(anime.id, 'remove')}>Remove</li>
-                                                        </ul>
+                {Object.keys(statusHeadings).map(status => {
+                    const animeList = groupedAnime[status];
+                    if (animeList && animeList.length > 0) {
+                        return (
+                            <section key={status} className="bg-gray-800 rounded-2xl p-6 shadow-xl">
+                                <h2 className="text-2xl font-bold mb-4">{statusHeadings[status]}</h2>
+                                <div className="space-y-4">
+                                    {animeList.map(anime => (
+                                        <div key={anime.id} className={`flex items-center p-4 bg-gray-700 rounded-lg shadow-lg border-l-4 ${statusColors[anime.watch_status] || 'border-gray-500'}`}>
+                                            <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 mr-4">
+                                                <img src={anime.imageUrl} alt={anime.title} className="w-full h-full object-cover rounded-md" />
+                                            </div>
+                                            <div className="flex-grow flex flex-col justify-between">
+                                                <div className="flex justify-between items-start">
+                                                    <h3 className="text-xl font-bold line-clamp-2">{anime.title}</h3>
+                                                    <div className="relative ml-4">
+                                                        <button
+                                                            onClick={() => setOpenDropdownId(openDropdownId === anime.id ? null : anime.id)}
+                                                            className="px-3 py-1 bg-gray-600 rounded-full text-xs font-bold hover:bg-gray-500"
+                                                        >
+                                                            Edit - More ▼
+                                                        </button>
+                                                        {openDropdownId === anime.id && (
+                                                            <ul className="absolute right-0 mt-2 w-40 bg-gray-800 rounded-lg shadow-lg z-10">
+                                                                <li className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer rounded-t-lg" onClick={() => handleUpdateWatchStatus(anime.id, 'watching')}>Watching</li>
+                                                                <li className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer" onClick={() => handleUpdateWatchStatus(anime.id, 'completed')}>Completed</li>
+                                                                <li className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer" onClick={() => handleUpdateWatchStatus(anime.id, 'on hold')}>On Hold</li>
+                                                                <li className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer" onClick={() => handleUpdateWatchStatus(anime.id, 'dropped')}>Dropped</li>
+                                                                <li className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer" onClick={() => handleUpdateWatchStatus(anime.id, 'plan to watch')}>Plan to Watch</li>
+                                                                <li className="px-4 py-2 text-sm text-red-400 hover:bg-red-900 cursor-pointer rounded-b-lg" onClick={() => handleUpdateWatchStatus(anime.id, 'remove')}>Remove</li>
+                                                            </ul>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center mt-2">
+                                                    <span className="text-sm text-gray-400 mr-2">Status:</span>
+                                                    <span className={`text-xs font-semibold px-2 py-1 rounded-full border ${statusColors[anime.watch_status]}`}>{formatStatus(anime.watch_status)}</span>
+                                                </div>
+                                                <div className="mt-2 flex items-center">
+                                                    {editingEpisodeId === anime.id ? (
+                                                        <div className="flex items-center space-x-2">
+                                                            <input
+                                                                type="number"
+                                                                value={anime.currentEpisode}
+                                                                onChange={(e) => handleUpdateEpisode(anime.id, e.target.value)}
+                                                                onBlur={() => setEditingEpisodeId(null)}
+                                                                className="w-16 bg-gray-900 text-white rounded px-2 py-1 text-sm focus:outline-none"
+                                                            />
+                                                            <span className="text-sm">/ {anime.totalEpisodes}</span>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex items-center">
+                                                            <span className="text-lg font-semibold cursor-pointer" onClick={() => setEditingEpisodeId(anime.id)}>
+                                                                {anime.currentEpisode} / {anime.totalEpisodes}
+                                                            </span>
+                                                            <button onClick={() => setEditingEpisodeId(anime.id)} className="ml-2 text-xs font-bold text-blue-400 hover:text-blue-200">
+                                                                Edit
+                                                            </button>
+                                                        </div>
                                                     )}
                                                 </div>
                                             </div>
-                                            <div className="flex items-center mt-2">
-                                                <span className="text-sm text-gray-400 mr-2">Status:</span>
-                                                <span className={`text-xs font-semibold px-2 py-1 rounded-full border ${statusColors[anime.watch_status]}`}>{formatStatus(anime.watch_status)}</span>
-                                            </div>
-                                            <div className="mt-2 flex items-center">
-                                                {editingEpisodeId === anime.id ? (
-                                                    <div className="flex items-center space-x-2">
-                                                        <input
-                                                            type="number"
-                                                            value={anime.currentEpisode}
-                                                            onChange={(e) => handleUpdateEpisode(anime.id, e.target.value)}
-                                                            onBlur={() => setEditingEpisodeId(null)}
-                                                            className="w-16 bg-gray-900 text-white rounded px-2 py-1 text-sm focus:outline-none"
-                                                        />
-                                                        <span className="text-sm">/ {anime.totalEpisodes}</span>
-                                                    </div>
-                                                ) : (
-                                                    <div className="flex items-center">
-                                                        <span className="text-lg font-semibold cursor-pointer" onClick={() => setEditingEpisodeId(anime.id)}>
-                                                            {anime.currentEpisode} / {anime.totalEpisodes}
-                                                        </span>
-                                                        <button onClick={() => setEditingEpisodeId(anime.id)} className="ml-2 text-xs font-bold text-blue-400 hover:text-blue-200">
-                                                            Edit
-                                                        </button>
-                                                    </div>
-                                                )}
-                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-                    )
-                ))}
+                                    ))}
+                                </div>
+                            </section>
+                        );
+                    }
+                    return null; // Return null for statuses with no anime
+                })}
             </div>
         </div>
     );

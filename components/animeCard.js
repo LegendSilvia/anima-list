@@ -133,6 +133,7 @@ export default function AnimeCard({ anime }) {
                         </button>
                         <div className="absolute mt-2 w-25 bg-gray-800 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                             <ul className="py-1">
+                                <li className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer" onClick={() => handleUpdateWatchStatus('plan to watch')}>Plan to Watch</li>
                                 <li className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer" onClick={() => handleUpdateWatchStatus('watching')}>Watching</li>
                                 <li className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer" onClick={() => handleUpdateWatchStatus('completed')}>Completed</li>
                                 <li className="px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer" onClick={() => handleUpdateWatchStatus('on hold')}>On Hold</li>
