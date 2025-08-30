@@ -40,7 +40,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchAnime() {
       let url = new URL(`https://api.jikan.moe/v4/seasons/${year}/${season}?sfw`);
-      const params = new URLSearchParams({ page, sfw: "true", limit: "24" });
+      const params = new URLSearchParams({ page, sfw: "true", limit: "25" });
 
       // Note: Removed the rating and type filters from the URL, as the Jikan seasonal endpoint doesn't support them directly.
 
@@ -138,11 +138,11 @@ export default function Home() {
           • ㅤPage {page}
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {animeList.map((anime) => (
-            <AnimeCard key={anime.mal_id} anime={anime} />
-          ))}
-        </div>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(288px,1fr))] gap-6 p-4">
+    {animeList.map(anime => (
+        <AnimeCard key={anime.mal_id} anime={anime} />
+    ))}
+</div>
 
         <div className="flex justify-center mt-6 space-x-4">
           <button

@@ -25,8 +25,8 @@ export default function AnimeCard({ anime }) {
     };
 
     return (
-        <div key={anime.mal_id} className="relative w-72 h-120 bg-gray-900 rounded-lg overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105">
-            <div className="relative w-full h-2/3">
+        <div key={anime.mal_id} className="relative w-full sm:w-72 md:w-80 h-120 bg-gray-900 rounded-lg overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105">
+            <div className="relative w-full h-1/2 sm:h-2/3">
                 <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
                 <div className="absolute bottom-2 left-2 px-2 py-1 bg-black bg-opacity-70 text-white text-xs font-bold rounded-full">
                     {rating}
@@ -34,7 +34,6 @@ export default function AnimeCard({ anime }) {
                 <div className="absolute top-2 left-2 px-2 py-1 bg-gray-700 bg-opacity-70 text-white text-xs font-bold rounded-full">
                     {type}
                 </div>
-
                 <div
                     className="absolute top-2 right-2 px-2 py-1 bg-blue-200 border rounded-full border-blue-600 hover:text-white hover:scale-105 hover:bg-blue-600 text-blue-600 text-xs font-bold rounded-full cursor-pointer"
                     onClick={handleAddToWatchlist}
@@ -44,7 +43,7 @@ export default function AnimeCard({ anime }) {
                 </div>
             </div>
 
-            <div className="p-4 flex flex-col justify-between h-1/3 text-white">
+            <div className="p-4 flex flex-col justify-between h-1/2 sm:h-1/3 text-white">
                 <div>
                     <div className="flex justify-between items-center mb-1">
                         <span
