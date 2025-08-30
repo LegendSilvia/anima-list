@@ -17,7 +17,6 @@ This project is open source and intended for personal-learning.
 - **React** 19
 - **Tailwind CSS** 4
 - **Jikan API** (Anime data)
-- **React Icons**
 
 ## Caution
 
