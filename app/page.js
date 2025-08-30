@@ -37,43 +37,44 @@ export default function Home() {
   const [type, setType] = useState("all");
   const [rating, setRating] = useState("all");
 
-  useEffect(() => {
-    async function fetchAnime() {
-      let url = new URL(`https://api.jikan.moe/v4/seasons/${year}/${season}?sfw`);
-      const params = new URLSearchParams({ page, sfw: "true", limit: "25" });
+  // Caching object outside the component scope
+  const animeCache = {};
 
-      // Note: Removed the rating and type filters from the URL, as the Jikan seasonal endpoint doesn't support them directly.
+  async function fetchAnimeWithCache(year, season, page) {
+    const cacheKey = `${year}-${season}-${page}`;
 
-      url.search = params.toString();
-
-      try {
-        const res = await fetch(url);
-        const json = await res.json();
-
-        const rawData = json.data ?? [];
-
-        // Create a Set to store unique mal_ids
-        const uniqueIds = new Set();
-        const uniqueAnimeList = [];
-
-        // Iterate through the fetched data and add only unique items
-        rawData.forEach(anime => {
-          if (!uniqueIds.has(anime.mal_id)) {
-            uniqueIds.add(anime.mal_id);
-            uniqueAnimeList.push(anime);
-          }
-        });
-
-        setAnimeList(uniqueAnimeList);
-        setHasNextPage(json.pagination?.has_next_page ?? false);
-      } catch (err) {
-        console.error("Fetch error:", err);
-        // It's good practice to clear the list on error
-        setAnimeList([]);
-      }
+    // Check if data exists in cache
+    if (animeCache[cacheKey]) {
+      console.log("Fetching from cache...");
+      return animeCache[cacheKey];
     }
 
-    fetchAnime();
+    // If not, fetch it from the API
+    const url = new URL(`https://api.jikan.moe/v4/seasons/${year}/${season}`);
+    const params = new URLSearchParams({ page, sfw: "true", limit: "25" });
+    url.search = params.toString();
+
+    try {
+      const res = await fetch(url);
+      const json = await res.json();
+      const rawData = json.data ?? [];
+
+      // Store the fetched data in the cache before returning it
+      animeCache[cacheKey] = rawData;
+      console.log("Data fetched from API and cached.");
+      return rawData;
+    } catch (err) {
+      console.error("Fetch error:", err);
+      return [];
+    }
+  }
+
+  // Then, in your component's useEffect:
+  useEffect(() => {
+    async function getAnime() {
+      setAnimeList(await fetchAnimeWithCache(year, season, page));
+    }
+    getAnime();
   }, [year, season, page]);
 
   return (
@@ -139,10 +140,10 @@ export default function Home() {
         </h2>
 
         <div className="grid grid-cols-[repeat(auto-fit,minmax(288px,1fr))] gap-6 p-4">
-    {animeList.map(anime => (
-        <AnimeCard key={anime.mal_id} anime={anime} />
-    ))}
-</div>
+          {animeList.map(anime => (
+            <AnimeCard key={anime.mal_id} anime={anime} />
+          ))}
+        </div>
 
         <div className="flex justify-center mt-6 space-x-4">
           <button

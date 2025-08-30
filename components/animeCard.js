@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function AnimeCard({ anime }) {
-    const imageUrl = anime.images?.jpg?.image_url;
+    const imageUrl = anime.images?.jpg?.large_image_url;
     const title = anime.title;
     const episodes = anime.episodes;
     const score = anime.score;
