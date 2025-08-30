@@ -1,55 +1,39 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import AnimeCard from "../components/animeCard";
+import { useState, useEffect, useCallback, useRef } from "react";
+import AnimeCard from "./../components/animeCard";
+import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 
-function getCurrentSeason() {
-  const month = new Date().getMonth() + 1; // 1–12
-  if ([1, 2, 3].includes(month)) return "winter";
-  if ([4, 5, 6].includes(month)) return "spring";
-  if ([7, 8, 9].includes(month)) return "summer";
-  return "fall";
-}
-
-const currentYear = new Date().getFullYear();
-const currentSeason = getCurrentSeason();
-
-const TYPES = ["all", "tv", "ova", "movie", "special", "ona", "music"];
+const SEASONS = ["winter", "spring", "summer", "fall"];
 
 export default function Home() {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1;
-  const initialSeason = currentMonth <= 3
-    ? "winter"
-    : currentMonth <= 6
-      ? "spring"
-      : currentMonth <= 9
-        ? "summer"
-        : "fall";
+  const initialSeason =
+    currentMonth <= 3
+      ? "winter"
+      : currentMonth <= 6
+        ? "spring"
+        : currentMonth <= 9
+          ? "summer"
+          : "fall";
 
   const [year, setYear] = useState(currentYear);
   const [season, setSeason] = useState(initialSeason);
   const [animeList, setAnimeList] = useState([]);
   const [page, setPage] = useState(1);
-  const [hasNextPage, setHasNextPage] = useState(false);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  // rating and type filter seems to not work on seasonal endpoint
-  const [type, setType] = useState("all");
-  const [rating, setRating] = useState("all");
+  // Correctly initialize and persist the cache using useRef
+  const animeCacheRef = useRef({});
 
-  // Caching object outside the component scope
-  const animeCache = {};
-
-  async function fetchAnimeWithCache(year, season, page) {
+  const fetchAnimeWithCache = useCallback(async (year, season, page) => {
     const cacheKey = `${year}-${season}-${page}`;
-
-    // Check if data exists in cache
-    if (animeCache[cacheKey]) {
-      console.log("Fetching from cache...");
-      return animeCache[cacheKey];
+    // Access the cache using .current
+    if (animeCacheRef.current[cacheKey]) {
+      return animeCacheRef.current[cacheKey];
     }
-
-    // If not, fetch it from the API
     const url = new URL(`https://api.jikan.moe/v4/seasons/${year}/${season}`);
     const params = new URLSearchParams({ page, sfw: "true", limit: "25" });
     url.search = params.toString();
@@ -58,110 +42,109 @@ export default function Home() {
       const res = await fetch(url);
       const json = await res.json();
       const rawData = json.data ?? [];
-
-      // Store the fetched data in the cache before returning it
-      animeCache[cacheKey] = rawData;
-      console.log("Data fetched from API and cached.");
-      return rawData;
+      const hasNextPage = json.pagination?.has_next_page ?? false;
+      const result = { data: rawData, hasNextPage };
+      // Store the result in the cache
+      animeCacheRef.current[cacheKey] = result;
+      return result;
     } catch (err) {
       console.error("Fetch error:", err);
-      return [];
+      return { data: [], hasNextPage: false };
     }
-  }
+  }, []); // No dependencies are needed since useRef provides a stable reference
 
-  // Then, in your component's useEffect:
   useEffect(() => {
-    async function getAnime() {
-      setAnimeList(await fetchAnimeWithCache(year, season, page));
-    }
+    const getAnime = async () => {
+      setLoading(true);
+      const { data, hasNextPage } = await fetchAnimeWithCache(year, season, page);
+      setAnimeList(data);
+      setHasNextPage(hasNextPage);
+      setLoading(false);
+    };
     getAnime();
-  }, [year, season, page]);
+  }, [year, season, page, fetchAnimeWithCache]);
+
+  const handleSeasonChange = (direction) => {
+    const currentIndex = SEASONS.indexOf(season);
+    const newIndex = (currentIndex + direction + SEASONS.length) % SEASONS.length;
+    const newSeason = SEASONS[newIndex];
+
+    let newYear = year;
+    if (direction === 1 && newSeason === "winter") {
+      newYear += 1;
+    } else if (direction === -1 && newSeason === "fall") {
+      newYear -= 1;
+    }
+
+    setYear(newYear);
+    setSeason(newSeason);
+    setPage(1);
+  };
 
   return (
-    <div className="p-4 space-y-6">
-      {/* Section 1: Filters */}
-      <section className="bg-gray-700 text-white rounded-lg p-4 shadow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div>
-          <label className="text-xl font-bold mb-4 block mb-1">Year</label>
-          <select
-            value={year}
-            onChange={(e) => {
-              setYear(Number(e.target.value));
-              setPage(1);
-            }}
-            className="p-2 rounded-md bg-gray-600 text-white w-full border border-gray-500 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {Array.from({ length: 25 }, (_, i) => currentYear - i).map((y) => (
-              <option key={y} value={y}>
-                {y}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="text-xl font-bold mb-4 block mb-1">Season</label>
-          <select
-            value={season}
-            onChange={(e) => {
-              setSeason(e.target.value);
-              setPage(1);
-            }}
-            className="p-2 rounded-md bg-gray-600 text-white w-full border border-gray-500 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {["winter", "spring", "summer", "fall"].map((s) => (
-              <option key={s} value={s}>
-                {s.charAt(0).toUpperCase() + s.slice(1)}
-              </option>
-            ))}
-          </select>
-        </div>
-        {/* <div>
-          <label className="block mb-1">Type</label>
-          <select
-            value={type}
-            onChange={(e) => { setType(e.target.value); setPage(1); }}
-            className="p-2 rounded text-black w-full"
-          >
-            {TYPES.map((t) => (
-              <option key={t} value={t}>{t.toUpperCase()}</option>
-            ))}
-          </select>
-        </div> */}
-      </section>
-
-      {/* Section 2: Anime Grid + Pagination */}
-      <section className="bg-gray-800 text-white rounded-lg p-6 shadow min-h-[400px]">
-        <h2 className="text-xl font-bold mb-4">
-          Anime List:ㅤ {season.charAt(0).toUpperCase() + season.slice(1)} {year}ㅤ
-          {type !== "all" && ` • ${type.toUpperCase()}`}
-          {rating !== "all" && ` • Rating: ${rating.toUpperCase()}`}
-          • ㅤPage {page}
-        </h2>
-
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(288px,1fr))] gap-6 p-4">
-          {animeList.map(anime => (
-            <AnimeCard key={anime.mal_id} anime={anime} />
-          ))}
-        </div>
-
-        <div className="flex justify-center mt-6 space-x-4">
+    <div className="min-h-screen bg-gray-900 text-white font-sans p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        <section className="bg-gray-800 rounded-2xl p-6 shadow-xl flex items-center justify-between">
           <button
-            disabled={page === 1}
-            onClick={() => setPage(p => p - 1)}
-            className="px-4 py-2 bg-gray-600 rounded disabled:opacity-50"
+            onClick={() => handleSeasonChange(-1)}
+            className="p-3 transition-transform duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full"
+            aria-label="Previous Season"
           >
-            Previous
+            <ArrowLeftCircleIcon className="w-8 h-8 text-blue-500" />
           </button>
+          <div className="flex flex-col items-center">
+            <span className="text-base text-gray-400 font-light hidden sm:block">
+              {season.charAt(0).toUpperCase() + season.slice(1)} {year}
+            </span>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-center tracking-wide mt-1">
+              {season.charAt(0).toUpperCase() + season.slice(1)} {year} Anime
+            </h1>
+          </div>
           <button
-            disabled={!hasNextPage}
-            onClick={() => setPage(p => p + 1)}
-            className="px-4 py-2 bg-gray-600 rounded disabled:opacity-50"
+            onClick={() => handleSeasonChange(1)}
+            className="p-3 transition-transform duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full"
+            aria-label="Next Season"
           >
-            Next
+            <ArrowRightCircleIcon className="w-8 h-8 text-blue-500" />
           </button>
-        </div>
-      </section>
+        </section>
+        <section className="bg-gray-800 rounded-2xl p-6 shadow-xl min-h-[500px] flex flex-col">
+          {loading ? (
+            <div className="flex justify-center items-center flex-grow text-2xl text-gray-400">
+              Loading...
+            </div>
+          ) : (
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(288px,1fr))] gap-6 p-4">
+              {animeList.length > 0 ? (
+                animeList.map((anime) => (
+                  <AnimeCard key={anime.mal_id} anime={anime} />
+                ))
+              ) : (
+                <div className="col-span-full flex justify-center items-center h-full text-2xl text-gray-400">
+                  No anime found for this season.
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="flex justify-center mt-6 space-x-4">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage((p) => p - 1)}
+              className="px-6 py-3 bg-gray-700 text-white rounded-full font-bold shadow-md transition-all duration-200 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <button
+              disabled={!hasNextPage || loading}
+              onClick={() => setPage((p) => p + 1)}
+              className="px-6 py-3 bg-blue-600 text-white rounded-full font-bold shadow-md transition-all duration-200 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
