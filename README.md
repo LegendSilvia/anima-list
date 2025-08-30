@@ -9,7 +9,7 @@ Key features:
 - Add anime to your watchlist (UI only, backend coming soon)
 - Built with Next.js App Router and Tailwind CSS
 
-This project is open source and intended for anime fans and developers interested in learning about modern React and
+This project is open source and intended for personal-learning.
 
 ## Tech Stack
 
