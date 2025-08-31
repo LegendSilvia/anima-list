@@ -107,8 +107,8 @@ export default function AnimeCard({ anime }) {
     };
 
     return (
-        <div key={animeId} className="relative w-full sm:w-52 md:w-96 h-162 bg-gray-900 rounded-lg overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105">
-            <div className="relative w-full h-2/3 sm:h-3/4">
+        <div key={animeId} className="relative h-116 bg-gray-900 rounded-lg overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105">
+            <div className="relative w-full h-2/3 sm:h-3/4.5">
                 <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
                 <div className="absolute bottom-2 left-2 px-2 py-1 bg-black bg-opacity-70 text-white text-xs font-bold rounded-full">
                     {rating ? rating : "N/A"}

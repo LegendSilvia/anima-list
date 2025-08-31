@@ -121,7 +121,7 @@ export default function Home() {
               Loading...
             </div>
           ) : (
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(372px,1fr))] gap-6 p-4">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6 p-4">
               {animeList.length > 0 ? (
                 animeList.map((anime) => (
                   <AnimeCard key={anime.mal_id} anime={anime} />
