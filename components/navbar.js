@@ -52,9 +52,9 @@ export default function Navbar() {
             {/* Mobile Menu */}
             {isOpen && (
                 <div className="md:hidden px-4 pb-4 space-y-2 bg-gray-700">
-                    <Link href="/" className="block hover:text-gray-300">Home</Link>
-                    <Link href="/anime" className="block hover:text-gray-300">Anime</Link>
-                    <Link href="/about" className="block hover:text-gray-300">About</Link>
+                    <Link href="/" className="block hover:text-gray-300">Anime List</Link>
+                    <Link href="/yourlist" className="block hover:text-gray-300">Your List</Link>
+                    <Link href="https://github.com/LegendSilvia/anima-list" className="block hover:text-gray-300">GitHub</Link>
                 </div>
             )}
         </nav>
