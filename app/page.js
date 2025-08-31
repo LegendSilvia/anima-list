@@ -63,7 +63,20 @@ export default function Home() {
       setLoading(true);
       const { data, hasNextPage } = await fetchAnimeWithCache(year, season, page);
       // const { data, hasNextPage } = getMockupData();
-      setAnimeList(data);
+
+      // De-duplication logic to handle potential duplicate mal_id's
+      const seenIds = new Set();
+      const uniqueAnimeList = data.filter(anime => {
+        if (seenIds.has(anime.mal_id)) {
+          console.warn(`Skipped duplicate anime with mal_id: ${anime.mal_id}`);
+          return false;
+        } else {
+          seenIds.add(anime.mal_id);
+          return true;
+        }
+      });
+
+      setAnimeList(uniqueAnimeList);
       setHasNextPage(hasNextPage);
       setLoading(false);
     };

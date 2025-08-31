@@ -19,11 +19,17 @@ export default function Navbar() {
 
                     {/* Desktop Menu */}
                     <div className="hidden md:flex space-x-6 items-center">
+                        <Link href="/topanime" className="hover:text-gray-300">
+                            Top Anime
+                        </Link>
+                        <Link href="/search" className="hover:text-gray-300">
+                            Search Anime
+                        </Link>
                         <Link href="/" className="hover:text-gray-300">
-                            Anime List
+                            Seasonal Anime
                         </Link>
                         <Link href="/yourlist" className="hover:text-gray-300">
-                            Your List
+                            My List
                         </Link>
 
                         {/* GitHub Logo and Link */}
@@ -52,8 +58,10 @@ export default function Navbar() {
             {/* Mobile Menu */}
             {isOpen && (
                 <div className="md:hidden px-4 pb-4 space-y-2 bg-gray-700">
-                    <Link href="/" className="block hover:text-gray-300">Anime List</Link>
-                    <Link href="/yourlist" className="block hover:text-gray-300">Your List</Link>
+                    <Link href="/topanime" className="block hover:text-gray-300">Top Anime</Link>
+                    <Link href="/search" className="block hover:text-gray-300">Search Anime</Link>
+                    <Link href="/" className="block hover:text-gray-300">Seasonal Anime</Link>
+                    <Link href="/yourlist" className="block hover:text-gray-300">My List</Link>
                     <Link href="https://github.com/LegendSilvia/anima-list" className="block hover:text-gray-300">GitHub</Link>
                 </div>
             )}
