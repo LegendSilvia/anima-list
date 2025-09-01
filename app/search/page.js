@@ -34,7 +34,7 @@ const RATING_LABELS = {
   pg13: "PG-13+ - Teens 13 or older",
   r17: "R - 17+ (Violence & profanity)",
   r: "R+ - Mild Nudity",
-  rx: "Rx - Hentai (Not Safe For Work)",
+  // rx: "Rx - Hentai (Not Safe For Work)",
 };
 
 // Correctly map API sorts to human-readable text
