@@ -13,7 +13,7 @@ import {
 // We will use the available filters from that image.
 const ANIME_TYPES = ["tv", "ova", "special", "ona", "music", "movie"];
 const ANIME_STATUSES = ["airing", "complete", "upcoming"];
-const ANIME_RATINGS = ["g", "pg", "pg13", "r17", "r", "rx"];
+const ANIME_RATINGS = ["g", "pg", "pg13", "r17", "r"];
 const ANIME_SORTS = [
   "title",
   "start_date",
@@ -34,7 +34,7 @@ const RATING_LABELS = {
   pg13: "PG-13+ - Teens 13 or older",
   r17: "R - 17+ (Violence & profanity)",
   r: "R+ - Mild Nudity",
-  rx: "Rx - Hentai (Not Safe For Work)",
+  // rx: "Rx - Hentai (Not Safe For Work)",
 };
 
 // Correctly map API sorts to human-readable text
