@@ -27,36 +27,53 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   // Correctly initialize and persist the cache using useRef
-  const animeCacheRef = useRef({});
 
   const getMockupData = () => {
     return { data: mockupData.data, hasNextPage: false };
   };
 
-  const fetchAnimeWithCache = useCallback(async (year, season, page) => {
+  const animeCacheRef = useRef({});
+
+// Remove getMockupData or keep it for local testing
+
+const fetchAnimeWithCache = useCallback(async (year, season, page) => {
     const cacheKey = `${year}-${season}-${page}`;
     // Access the cache using .current
     if (animeCacheRef.current[cacheKey]) {
-      return animeCacheRef.current[cacheKey];
+        console.log(`[Client Cache] Serving ${cacheKey} from client cache.`);
+        return animeCacheRef.current[cacheKey];
     }
-    const url = new URL(`https://api.jikan.moe/v4/seasons/${year}/${season}`);
+    
+    // *** MODIFIED: Use the local service URL on port 4000 ***
+    const url = new URL(`http://localhost:4000/api/seasons/${year}/${season}`); 
+    // ********************************************************
+    
     const params = new URLSearchParams({ page, sfw: "true", limit: "24" });
     url.search = params.toString();
 
     try {
-      const res = await fetch(url);
-      const json = await res.json();
-      const rawData = json.data ?? [];
-      const hasNextPage = json.pagination?.has_next_page ?? false;
-      const result = { data: rawData, hasNextPage };
-      // Store the result in the cache
-      animeCacheRef.current[cacheKey] = result;
-      return result;
+        const res = await fetch(url);
+        // Check for non-200 responses from the proxy service
+        if (!res.ok) {
+            const errorBody = await res.json();
+            throw new Error(`Proxy service error: ${errorBody.error || res.statusText}`);
+        }
+        
+        const json = await res.json();
+        
+        // Jikan's response structure is preserved, so the rest is the same
+        const rawData = json.data ?? [];
+        const hasNextPage = json.pagination?.has_next_page ?? false;
+        const result = { data: rawData, hasNextPage };
+        
+        // Store the result in the client-side cache
+        animeCacheRef.current[cacheKey] = result;
+        return result;
     } catch (err) {
-      console.error("Fetch error:", err);
-      return { data: [], hasNextPage: false };
+        console.error("Fetch error:", err);
+        return { data: [], hasNextPage: false };
     }
-  }, []); // No dependencies are needed since useRef provides a stable reference
+}, []);
 
   useEffect(() => {
     const getAnime = async () => {
@@ -141,7 +158,7 @@ export default function Home() {
                 ))
               ) : (
                 <div className="col-span-full flex justify-center items-center h-full text-2xl text-gray-400">
-                  No anime found for this season.
+                  No anime found for this season. // Service unavailable
                 </div>
               )}
             </div>
